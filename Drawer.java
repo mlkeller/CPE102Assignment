@@ -61,8 +61,7 @@ public class Drawer extends PApplet
 			{
 				for (int x = 0; x < view.getViewport().getWidth(); x++)
 				{
-					Point w_pt = new Point(x + view.getViewport().getLeft(),
-										   y + view.getViewport().getTop());
+					Point w_pt = view.viewportToWorld(new Point(x, y));
 					PImage img = world.getBackgroundImage(w_pt);
 					image(img, x*view.getTileWidth(), y*view.getTileHeight());
 				}
@@ -86,15 +85,17 @@ public class Drawer extends PApplet
 				for (Point draw_pt : entity_under_mouse.getSearched())
 				{
 					fill(0);
-					rect((draw_pt.getX() - view.getViewport().getLeft()) * view.getTileWidth() + 14,
-						 (draw_pt.getY() - view.getViewport().getTop()) * view.getTileHeight() + 14,
+					draw_pt = view.worldToViewport(draw_pt);
+					rect(draw_pt.getX() * view.getTileWidth() + 14,
+						 draw_pt.getY() * view.getTileHeight() + 14,
 						 4, 4);
 				}
 				for (Point draw_pt : entity_under_mouse.getPath())
 				{
 					fill(255, 100, 100);
-					rect((draw_pt.getX() - view.getViewport().getLeft()) * view.getTileWidth() + 12,
-						 (draw_pt.getY() - view.getViewport().getTop()) * view.getTileHeight() + 12,
+					draw_pt = view.worldToViewport(draw_pt);
+					rect(draw_pt.getX() * view.getTileWidth() + 12,
+						 draw_pt.getY() * view.getTileHeight() + 12,
 						 8, 8);
 				}
 			}
