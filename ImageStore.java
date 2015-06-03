@@ -33,7 +33,7 @@ public abstract class ImageStore
 		catch (FileNotFoundException e)
 		{
 			System.out.println("File imagelist.txt may be missing.\n\n" + e);
-			//System.exit(0);
+			System.exit(0);
 		}
 		return images;
 	}

@@ -23,6 +23,7 @@ public class Drawer extends PApplet
 	private static final int COLOR_MASK = 0xffffff;
 
 	long next_time;
+	Map<String, List<PImage>> i_store;
 
 	
 	public static void main(String[] args)
@@ -35,7 +36,7 @@ public class Drawer extends PApplet
 		int num_cols = SCREEN_WIDTH / TILE_WIDTH * WORLD_WIDTH_SCALE;
 		int num_rows = SCREEN_HEIGHT / TILE_HEIGHT * WORLD_HEIGHT_SCALE;
 		
-		Map<String, List<PImage>> i_store = ImageStore.loadImages(this, IMAGE_LIST_FILE_NAME, TILE_WIDTH, TILE_HEIGHT);
+		i_store = ImageStore.loadImages(this, IMAGE_LIST_FILE_NAME, TILE_WIDTH, TILE_HEIGHT);
 		Background default_background = SaveLoad.createDefaultBackground(ImageStore.getImages(i_store, ImageStore.DEFAULT_IMAGE_NAME));
 
 		world = new WorldModel(num_rows, num_cols, default_background);
@@ -55,6 +56,7 @@ public class Drawer extends PApplet
 		
 		if (time >= next_time)
 		{
+			System.out.println(world.getActionQueue().getSize());
 			world.updateOnTime(time);
 			//draw background
 			for (int y = 0; y < view.getViewport().getHeight(); y++)
@@ -136,7 +138,32 @@ public class Drawer extends PApplet
 		}
 	}
 	
-	public Point mousePoint(int tile_width, int tile_height, Rectangle viewport)
+	public void mouseClicked()
+	{
+		System.out.println("click");
+		Point mouse_pt = mousePoint(TILE_WIDTH, TILE_HEIGHT, view.getViewport());
+
+		world.scheduleAction(world.effectRing(mouse_pt, 0, 3, i_store),
+							 System.currentTimeMillis());
+		
+		Knight knight;
+		if (world.isOccupied(mouse_pt))
+		{
+			knight = world.createKnight("knight", world.findOpenAround(mouse_pt, 1), i_store);
+		}
+		else
+		{
+			knight = world.createKnight("knight", mouse_pt, i_store);
+		}
+		
+		knight.scheduleKnight(world, System.currentTimeMillis(), i_store);
+		world.addEntity(knight);
+		
+
+	}
+	
+	public Point mousePoint(int tile_width, int tile_height, Rectangle viewport
+			)
 	{
 		int xcoord = mouseX/tile_width + viewport.getLeft();
 		int ycoord = mouseY/tile_height + viewport.getTop();

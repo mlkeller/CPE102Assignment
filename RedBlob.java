@@ -2,15 +2,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import processing.core.*;
+import processing.core.PImage;
 
-public class OreBlob extends Blob
+
+public class RedBlob extends Blob
 {
-	public OreBlob(String name, Point position, List<PImage> imgs, int animation_rate, int rate)
+	public RedBlob(String name, Point position, List<PImage> imgs,
+				   int animation_rate, int rate)
 	{
 		super(name, position, imgs, animation_rate, rate);
 	}
-	
+
 	public Action createBlobSpecificAction(WorldModel world, Map<String, List<PImage>> i_store)
 	{
 		Action[] a = { null };
@@ -19,48 +21,49 @@ public class OreBlob extends Blob
 			this.removePendingAction(a[0]);
 			
 			Point entity_pt = this.getPosition();
-			Vein vein = (Vein)world.findNearest(entity_pt, Vein.class);
-			PointBooleanPair tiles_and_found = this.blobToVein(world, vein);
-				
+			MinerNotFull miner = (MinerNotFull)world.findNearest(entity_pt, MinerNotFull.class);
+			PointBooleanPair tiles_and_found = this.blobToMiner(world, miner);
+
 			long next_time = current_ticks + this.getRate();
-				
-			if (tiles_and_found.getBoolean())
+			
+			if(tiles_and_found.getBoolean())
 			{
-				Quake quake = world.createQuake(tiles_and_found.getPoint().get(0), current_ticks, i_store);
-				world.addEntity(quake);
-				next_time = current_ticks + this.getRate()*2;
+				MinerTrapped new_miner = world.createMinerTrapped(miner.getName(), tiles_and_found.getPoint().get(0),
+																  miner.getAnimationRate(), miner.getRate(),
+																  miner.getResourceLimit(), i_store);
+				world.addEntity(new_miner);
+				this.removeEntity(world);
 			}
 			
 			this.scheduleAction(world, this.createBlobSpecificAction(world, i_store), next_time);
-				
+			
 			return tiles_and_found.getPoint();
 		};
 		return a[0];
 	}
 	
-	public PointBooleanPair blobToVein(WorldModel world, Vein vein)
+	public PointBooleanPair blobToMiner(WorldModel world, MinerNotFull miner)
 	{
-
 		List<Point> return_pts = new ArrayList<Point>();
 		Point entity_pt = this.getPosition();
 		
-		if (vein == null)
+		if (miner == null)
 		{
 			return_pts.add(entity_pt);
 			return new PointBooleanPair(return_pts, false);
 		}
 		else
 		{
-			Point vein_pt = vein.getPosition();
-			if (MathOperations.adjacent(entity_pt, vein_pt))
+			Point miner_pt = miner.getPosition();
+			if (MathOperations.adjacent(entity_pt, miner_pt))
 			{
-				vein.removeEntity(world);
-				return_pts.add(vein_pt);
+				miner.removeEntity(world);
+				return_pts.add(miner_pt);
 				return new PointBooleanPair(return_pts, true);
 			}
 			else
 			{
-				List<Point> new_path = this.AStarPath(entity_pt, vein_pt, world);  // used to be Point new_pt = world.nextPosition(entity_pt, ore_pt);
+				List<Point> new_path = this.AStarPath(entity_pt, miner_pt, world);  // used to be Point new_pt = world.nextPosition(entity_pt, ore_pt);
 				if (new_path != null) //if pathfinding didn't fail
 				{
 					Entity old_entity = world.getTileOccupant(new_path.get(0));
@@ -78,5 +81,7 @@ public class OreBlob extends Blob
 			}
 		}
 	}
+	
+	
 
 }

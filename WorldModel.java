@@ -16,6 +16,9 @@ public class WorldModel
 	int QUAKE_ANIMATION_RATE = 100;
 	int VEIN_RATE_MIN = 8000;
 	int VEIN_RATE_MAX = 17000;
+	int KNIGHT_ANIMATION_RATE = 125;
+	int KNIGHT_RATE = 800;
+	int RING_RATE = 300;
 	
 	private int num_rows;
 	private int num_cols;
@@ -114,7 +117,6 @@ public class WorldModel
 		{
 			return (Background) this.background.getCell(pt);
 		}
-		//remember to deal with null
 		return null;
 	}
 	
@@ -132,7 +134,6 @@ public class WorldModel
 		{
 			return (Entity) this.occupancy.getCell(pt);
 		}
-		//remember to deal with null
 		return null;
 	}
 	
@@ -144,7 +145,7 @@ public class WorldModel
 			Entity old_entity = (Entity) this.occupancy.getCell(pt);
 			if (old_entity != null)
 			{
-				((Actionable)old_entity).clearPendingActions();  //it may crash and burn here
+				((Actionable)old_entity).clearPendingActions();
 			}
 			this.occupancy.setCell(pt, entity);
 			this.entities.add(entity);
@@ -196,7 +197,7 @@ public class WorldModel
 	
 	public void scheduleAction(Action action, long time)
 	{
-		this.action_queue.insert(action, time);  // + System.currentTimeMillis() + 
+		this.action_queue.insert(action, time);
 	}
 	
 	public void unscheduleAction(Action action)
@@ -326,6 +327,69 @@ public class WorldModel
 		return nearestEntity(oftype);
 	}
 	
+	public Action effectRing(Point center_pt, int rad, int repeat_count, Map<String, List<PImage>> i_store)
+	{
+		Action[] a = { null };
+		a[0] = (long current_ticks) ->
+		{
+			List<Point> center_pt_list = new ArrayList<Point>();
+			for(int dy = -rad; dy <= rad; dy++)
+			{
+				for(int dx = -rad; dx <= rad; dx++)
+				{
+					Point current_pt = new Point(center_pt.getX() + dx, center_pt.getY() + dy);
+					Background red_bgnd = new Background("background", ImageStore.getImages(i_store, "red_ring"));
+					this.setTileBackground(current_pt, red_bgnd);
+					center_pt_list.add(current_pt);
+					
+					if(this.getTileOccupant(current_pt) instanceof OreBlob)
+					{
+						OreBlob blob = (OreBlob) this.getTileOccupant(current_pt);
+						RedBlob new_blob = new RedBlob(blob.getName(), blob.getPosition(), ImageStore.getImages(i_store, "redblob"), blob.getAnimationRate(), blob.getRate()/10);
+						this.clearPendingActions(blob);
+						this.removeEntityAt(current_pt);
+						this.addEntity(new_blob);
+						new_blob.scheduleBlob(this, current_ticks, i_store);
+					}
+				}
+			}
+
+			for(int dy = -(rad - 1); dy <= (rad - 1); dy++)
+			{
+				for(int dx = -(rad - 1); dx <= (rad - 1); dx++)
+				{
+					Point current_pt = new Point(center_pt.getX() + dx, center_pt.getY() + dy);
+					Background old_bgnd = new Background("background", ImageStore.getImages(i_store, "burnt_grass"));
+					this.setTileBackground(current_pt, old_bgnd);
+				}
+			}
+			
+			if (repeat_count > 0)
+			{
+				this.scheduleAction(this.effectRing(center_pt, rad + 1, repeat_count - 1, i_store),
+						 			 current_ticks + RING_RATE);
+			}
+			else
+			{
+				//reset the background
+				for(int dy = -rad; dy <= rad; dy++)
+				{
+					for(int dx = -rad; dx <= rad; dx++)
+					{
+						Point current_pt = new Point(center_pt.getX() + dx, center_pt.getY() + dy);
+						Background red_bgnd = new Background("background", ImageStore.getImages(i_store, "burnt_grass"));
+						this.setTileBackground(current_pt, red_bgnd);
+					}
+				}
+				
+				//add golem
+			}
+			
+			return center_pt_list;
+		};
+		return a[0];
+	}
+	
 	public OreBlob createBlob(String name, Point pt, int rate, long ticks, Map<String, List<PImage>> i_store)
 	{
 		int animation_rate = random_generator.nextInt(BLOB_ANIMATION_MAX - BLOB_ANIMATION_MIN) + BLOB_ANIMATION_MIN;
@@ -353,6 +417,32 @@ public class WorldModel
 	{
 		int rate = random_generator.nextInt(VEIN_RATE_MAX - VEIN_RATE_MIN) + VEIN_RATE_MIN;
 		Vein vein = new Vein("vein" + name, pt, ImageStore.getImages(i_store, "vein"), rate);
+		vein.scheduleVein(this, ticks, i_store);
 		return vein;
+	}
+	
+	//schedule it in here
+	public MinerNotFull createMinerNotFull(String name, Point pt, int animation_rate, int rate,
+			 							   int resource_limit, Map<String, List<PImage>> i_store)
+	{
+		MinerNotFull miner = new MinerNotFull(name, pt, ImageStore.getImages(i_store, "miner"), animation_rate,
+											  rate, resource_limit);
+		return miner;
+	}
+										   
+	
+	public MinerTrapped createMinerTrapped(String name, Point pt, int animation_rate, int rate,
+										   int resource_limit, Map<String, List<PImage>> i_store)
+	{
+		MinerTrapped miner = new MinerTrapped(name, pt, ImageStore.getImages(i_store, "trapped_miner"), animation_rate,
+											  rate, resource_limit);
+		return miner;
+	}
+	
+	public Knight createKnight(String name, Point pt, Map<String, List<PImage>> i_store)
+	{
+		Knight knight = new Knight(name, pt, ImageStore.getImages(i_store, "knight"), KNIGHT_ANIMATION_RATE, KNIGHT_RATE);
+		System.out.println(ImageStore.getImages(i_store, "knight"));
+		return knight;
 	}
 }

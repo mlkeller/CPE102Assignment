@@ -87,7 +87,7 @@ public class MinerNotFull extends Miner
 				return_pts.add(ore_pt);
 				return new PointBooleanPair(return_pts, true);
 			}
-			//remember to deal with null
+	
 			else
 			{
 				List<Point> new_path = this.AStarPath(entity_pt, ore_pt, world);  // used to be Point new_pt = world.nextPosition(entity_pt, ore_pt);

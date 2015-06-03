@@ -1,4 +1,4 @@
-blacksmith images/blacksmith.bmp
+blacksmith images/blacksmith.bmp 255 255 255 0
 blob images/blob1.bmp 255 255 255 0
 blob images/blob2.bmp 255 255 255 0
 blob images/blob3.bmp 255 255 255 0
@@ -11,7 +11,20 @@ blob images/blob9.bmp 255 255 255 0
 blob images/blob10.bmp 255 255 255 0
 blob images/blob11.bmp 255 255 255 0
 blob images/blob12.bmp 255 255 255 0
+redblob images/evilredblob1.bmp 255 255 255 0
+redblob images/evilredblob2.bmp 255 255 255 0
+redblob images/evilredblob3.bmp 255 255 255 0
+redblob images/evilredblob4.bmp 255 255 255 0
+redblob images/evilredblob5.bmp 255 255 255 0
+redblob images/evilredblob6.bmp 255 255 255 0
+redblob images/evilredblob7.bmp 255 255 255 0
+redblob images/evilredblob8.bmp 255 255 255 0
+redblob images/evilredblob9.bmp 255 255 255 0
+redblob images/evilredblob10.bmp 255 255 255 0
+redblob images/evilredblob11.bmp 255 255 255 0
+redblob images/evilredblob12.bmp 255 255 255 0
 grass images/grass.bmp
+burnt_grass images/burnt_grass.bmp
 miner images/miner1.bmp 252 252 252 0
 miner images/miner2.bmp 252 252 252 0
 miner images/miner3.bmp 252 252 252 0
@@ -25,6 +38,12 @@ quake images/quake3.bmp 255 255 255 0
 quake images/quake4.bmp 255 255 255 0
 quake images/quake5.bmp 255 255 255 0
 quake images/quake6.bmp 255 255 255 0
+knight images/knight1.bmp 255 255 255 0
+knight images/knight2.bmp 255 255 255 0
+knight images/knight3.bmp 255 255 255 0
+knight images/knight4.bmp 255 255 255 0
 rocks images/rock.bmp
-vein images/vein.bmp
+vein images/vein.bmp 255 255 255 0
+trapped_miner images/trappedminer.bmp 255 255 255 0
+red_ring images/effect.bmp
 background_default images/none.bmp
