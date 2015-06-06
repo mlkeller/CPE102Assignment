@@ -1,0 +1,7 @@
+1. In order to trigger the world event you may click with the mouse. It is ideal to click when you are near a oreblob because that will start the actual event. If pressed without any oreblobs in the radius, the knight (new_entity) will simply disapear.
+
+2. When the event is triggered, there will be a blast of fire that will change the background to a more charred looking version of itself. This is represented by a ring of fire. If there are any oreblobs within the radius of the ring of fire then they will change into a red oreblob. It will also spawn a knight right in the middle of the blast (where you clicked). 
+
+3. The effect entity, the red oreblob, will seek out minerNotFull's and trap them. This is another new_entity called minerTrapped. This miner simply stands in place with no animation. The sprites color will also change to red. The red_oreblob will then disapear as soon as it has trapped the minerNotFUll. 
+
+4. The new entity is the knight, which spawns when the mouse is clicked. This mouse will search the world to see if there are any minerTrapped or red oreBlobs. If there are minerTrapped's then the knight will seek it out and untrap it turning it back into a minerNotFull. However if there are only red oreblobs on the map then it will follow it around untill it has trapped a Miner. If none of these entities are present in the world then the knight will simply be removed because it's goal has been accomplished. 

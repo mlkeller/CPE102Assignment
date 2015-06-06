@@ -56,7 +56,7 @@ public class Drawer extends PApplet
 		
 		if (time >= next_time)
 		{
-			System.out.println(world.getActionQueue().getSize());
+			//System.out.println(world.getActionQueue().getSize());
 			world.updateOnTime(time);
 			//draw background
 			for (int y = 0; y < view.getViewport().getHeight(); y++)
@@ -140,7 +140,7 @@ public class Drawer extends PApplet
 	
 	public void mouseClicked()
 	{
-		System.out.println("click");
+		//System.out.println("click");
 		Point mouse_pt = mousePoint(TILE_WIDTH, TILE_HEIGHT, view.getViewport());
 
 		world.scheduleAction(world.effectRing(mouse_pt, 0, 3, i_store),

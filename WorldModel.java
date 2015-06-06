@@ -442,7 +442,7 @@ public class WorldModel
 	public Knight createKnight(String name, Point pt, Map<String, List<PImage>> i_store)
 	{
 		Knight knight = new Knight(name, pt, ImageStore.getImages(i_store, "knight"), KNIGHT_ANIMATION_RATE, KNIGHT_RATE);
-		System.out.println(ImageStore.getImages(i_store, "knight"));
+		//System.out.println(ImageStore.getImages(i_store, "knight"));
 		return knight;
 	}
 }

@@ -33,21 +33,27 @@ public class Knight extends Mover
 																  miner.getResourceLimit(), i_store);
 				world.addEntity(new_miner);
 				new_miner.scheduleMiner(world, current_ticks, i_store);
-			}
-			else
-			{
-				if(world.findNearest(entity_pt, RedBlob.class) == null &&
-				   world.findNearest(entity_pt, MinerTrapped.class) == null)
-				{				
-					Quake quake = world.createQuake(this.getPosition(), current_ticks, i_store);
-					Vein vein = world.createVein("vein", this.getPosition(), current_ticks + Quake.QUAKE_DURATION*2, i_store);	
-					this.removeEntity(world);
-					world.addEntity(vein);
-					world.addEntity(quake);
-				}
-			}
 
-			this.scheduleAction(world, this.createKnightAction(world, i_store), next_time);
+				
+			}
+			
+			if(world.findNearest(entity_pt, RedBlob.class) == null &&
+				   world.findNearest(entity_pt, MinerTrapped.class) == null)
+			{				
+				Quake quake = world.createQuake(this.getPosition(), current_ticks, i_store);
+				//Vein vein = world.createVein("vein", this.getPosition(), current_ticks + Quake.QUAKE_DURATION*2, i_store);
+				world.clearPendingActions(this);
+				this.removeEntity(world);
+				//world.addEntity(vein);
+				world.addEntity(quake);
+			}
+			
+
+			if(!(world.findNearest(entity_pt, RedBlob.class) == null &&
+				   world.findNearest(entity_pt, MinerTrapped.class) == null))
+			{
+				this.scheduleAction(world, this.createKnightAction(world, i_store), next_time);
+			}
 			
 			return tiles_and_found.getPoint();
 		};
